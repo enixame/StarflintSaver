@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Authors>Maxime LEONARD (The Last Engineer)</Authors>
+    <Description>StarFlintSaver helps you to manage your saves for Starflint the Blackhole Prophecy game.</Description>
+    <PackageIcon></PackageIcon>
+    <ApplicationIcon>StarFlint.ico</ApplicationIcon>
+    <PackageId>StarFlintSaver</PackageId>
+    <Product>StarFlintSaver</Product>
+    <AssemblyName>StarFlintSaver</AssemblyName>
+    <StartupObject>StarFlintSaver.Windows.App</StartupObject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Icons\StarFlint.ico" />
+    <None Remove="Icons\StarFlint.jpg" />
+    <None Remove="Images\Saver.jpg" />
+    <Content Include="Icons\StarFlint.ico">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Images\Saver.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StarFlintSaver.Library\StarFlintSaver.Library.csproj" />
+  </ItemGroup>
+
+</Project>

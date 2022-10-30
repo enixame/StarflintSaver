@@ -1,0 +1,224 @@
+﻿<Window x:Class="StarFlintSaver.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:behaviors="clr-namespace:StarFlintSaver.Windows.Behaviours"
+        mc:Ignorable="d"
+        Title="StarFlint Saver" MinHeight="600" MinWidth="1000"
+        Closing="Window_Closing">
+
+    <Window.InputBindings>
+        <KeyBinding Key="F2" Command="{Binding FileManager.CreateSaveCommand, Mode=OneTime}" />
+        <KeyBinding Key="Insert" Command="{Binding FileManager.CreateSaveCommand, Mode=OneTime}" />
+        <KeyBinding Key="F5" Command="{Binding FileManager.LoadSaveCommand, Mode=OneTime}" />
+    </Window.InputBindings>
+
+    <Grid>
+        
+        <Grid.Resources>
+            <SolidColorBrush x:Key="BackgroundColor" Color="#FF100A26" />
+            <SolidColorBrush x:Key="LoadSaveButtonsColor" Color="#FF291C57" />
+            <SolidColorBrush x:Key="DeleteButtonsColor" Color="#FF812424" />
+            <SolidColorBrush x:Key="ResyncButtonsColor" Color="#FF124B17" />
+            <SolidColorBrush x:Key="MessageColor" Color="#FF474B1B" />
+            <SolidColorBrush x:Key="SaveMessageColor" Color="#FF866F8F" />
+
+            <Storyboard x:Key="BlinkStoryboard">
+                <DoubleAnimation Storyboard.TargetProperty="(TextBlock.Opacity)" 
+                                From="0" To="1" Duration="0:0:0.5" RepeatBehavior="Forever" AutoReverse="True"/>
+            </Storyboard>
+        </Grid.Resources>
+
+        <Grid Background="{StaticResource BackgroundColor}">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="4*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+
+            <Image Source="Images/Saver.jpg" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" />
+
+            <ListBox Grid.Column="0" Grid.Row="2" 
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto" 
+                 ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                 ItemsSource="{Binding FileManager.SaveFiles, Mode=OneWay}"
+                 SelectedItem="{Binding FileManager.SelectedSaveFile, Mode=TwoWay}"
+                 behaviors:ListBoxBehavior.ScrollSelectedIntoView="True"
+                 Background="{StaticResource BackgroundColor}"
+                 Foreground="White">
+                <ListBox.Resources>
+                    <DataTemplate x:Key="DefaultTemplate">
+                        <Grid Margin="0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="3*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding SaveFileInfo, Mode=OneTime}" 
+                                   Margin="2" FontWeight="Bold" FontSize="16"/>
+                            <TextBlock Grid.Column="1" Text="{Binding ShortFileName, Mode=OneTime}" VerticalAlignment="Center"
+                                   Margin="5 2 2 2" FontWeight="DemiBold"  FontSize="12" TextWrapping="Wrap"/>
+                            <TextBlock Grid.Column="2" Text="{Binding Description, Mode=OneWay}" 
+                                   VerticalAlignment="Center" Margin="5 2 2 2" FontSize="14"
+                                   TextWrapping="Wrap" Foreground="White" MinWidth="50"/>
+                        </Grid>
+                    </DataTemplate>
+                    <DataTemplate x:Key="EditTemplate">
+                        <Grid Margin="0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="3*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding SaveFileInfo, Mode=OneTime}" 
+                                   Margin="2" FontWeight="Bold" FontSize="16"/>
+                            <TextBlock Grid.Column="1" Text="{Binding ShortFileName, Mode=OneTime}" VerticalAlignment="Center"
+                                   Margin="5 2 2 2" FontWeight="DemiBold"  FontSize="12" TextWrapping="Wrap"/>
+                            <TextBox Grid.Column="2" Text="{Binding Description, Delay=500, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                   VerticalAlignment="Center" Margin="5 0 2 0" FontSize="14"
+                                   AcceptsReturn="True" TextWrapping="Wrap" Background="{StaticResource BackgroundColor}"
+                                   Foreground="White" BorderThickness="0" MinWidth="50"
+                                   behaviors:TextBoxBehavior.EnforceFocus="True">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Key="Delete" Command="{Binding ParentViewModel.DeleteSaveCommand, Mode=OneTime}" />
+                                    <KeyBinding Key="Insert" Command="{Binding ParentViewModel.CreateSaveCommand, Mode=OneTime}" />
+                                </TextBox.InputBindings>
+                            </TextBox>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.Resources>
+                <ListBox.Style>
+                    <Style TargetType="{x:Type ListBox}">
+                        <Setter Property="IsEnabled" Value="True"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding FileManager.ResyncProcessIsRunning, Mode=OneWay}" Value="True">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.Style>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="ContentTemplate" Value="{StaticResource DefaultTemplate}"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="ContentTemplate" Value="{StaticResource EditTemplate}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+
+            <StackPanel Orientation="Horizontal" Margin="5" Grid.Column="0" Grid.Row="3">
+                <TextBlock Text="{Binding FileManager.TotalSaveFilesCountDescription, Mode=OneWay}"
+                       HorizontalAlignment="Left" VerticalAlignment="Center"
+                       FontWeight="Bold" FontSize="16" Foreground="White" Margin="2 2 5 2"/>
+                <Button Margin="10" MaxHeight="50" MinWidth="200" Content="Resync from disk" FontSize="20" FontWeight="Heavy" 
+                        HorizontalAlignment="Left" Background="{StaticResource ResyncButtonsColor}" 
+                        Command="{Binding FileManager.ResyncCommand, Mode=OneTime}"
+                        Foreground="White"/>
+
+                <TextBlock Text="{Binding FileManager.Message, Mode=OneWay}"
+                       Foreground="{StaticResource MessageColor}" HorizontalAlignment="Left" VerticalAlignment="Center"
+                       FontSize="22" FontWeight="Heavy" Margin="5">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding FileManager.MessageAnimationStarting, Mode=OneWay}" Value="True">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard Storyboard="{StaticResource BlinkStoryboard}" x:Name="BeginMessageAnimation"/>
+                                    </DataTrigger.EnterActions>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding FileManager.MessageAnimationStarting, Mode=OneWay}" Value="False">
+                                    <DataTrigger.EnterActions>
+                                        <PauseStoryboard BeginStoryboardName="BeginMessageAnimation"/>
+                                    </DataTrigger.EnterActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <TextBlock Text="{Binding FileManager.SaveMessage, Mode=OneWay}" MinWidth="100"
+                       Foreground="{StaticResource SaveMessageColor}" HorizontalAlignment="Left" VerticalAlignment="Center"
+                       FontSize="14" FontWeight="SemiBold" Margin="2">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding FileManager.SavingInProgress, Mode=OneWay}" Value="True">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard Storyboard="{StaticResource BlinkStoryboard}" x:Name="BeginSaveAnimation"/>
+                                    </DataTrigger.EnterActions>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding FileManager.SavingInProgress, Mode=OneWay}" Value="False">
+                                    <DataTrigger.EnterActions>
+                                        <PauseStoryboard BeginStoryboardName="BeginSaveAnimation"/>
+                                    </DataTrigger.EnterActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+                <Button Margin="10" MaxHeight="50" MinWidth="200" Content="Create Save (F2)" FontSize="18" FontWeight="Heavy" 
+                        Command="{Binding FileManager.CreateSaveCommand, Mode=OneTime}" HorizontalAlignment="Left" 
+                        Background="{StaticResource LoadSaveButtonsColor}" Foreground="White"/>
+                <Button Margin="10" MaxHeight="50" MinWidth="200" Content="Delete Save (Del)" FontSize="18" FontWeight="Heavy" 
+                        Command="{Binding FileManager.DeleteSaveCommand, Mode=OneTime}" HorizontalAlignment="Left" 
+                        Background="{StaticResource DeleteButtonsColor}" Foreground="White"/>
+                <Button Margin="10" MaxHeight="50" MinWidth="200" Content="Load Save (F5)" FontSize="18" FontWeight="Heavy"
+                        Command="{Binding FileManager.LoadSaveCommand, Mode=OneTime}" HorizontalAlignment="Left"
+                        Background="{StaticResource LoadSaveButtonsColor}" Foreground="White"/>
+            </StackPanel>
+            
+            <Grid Grid.Column="1" Grid.Row="2" Margin="5"
+              DataContext="{Binding FileManager.SelectedSaveFile, Mode=OneWay}">
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="IsEnabled" Value="True"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="{Binding SaveFileInfo, Mode=OneTime}"
+                       HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Foreground="White"/>
+
+                <TextBlock Grid.Row="1" Text="{Binding ShortFileName, Mode=OneTime}" TextWrapping="Wrap"
+                       HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Foreground="White"/>
+
+                <TextBox Grid.Row="2" Text="{Binding Description, Delay=500, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                     TextWrapping="Wrap" AcceptsReturn="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" 
+                     ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="10 10 10 2"  Background="{StaticResource BackgroundColor}"
+                     Foreground="White" FontSize="16">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Delete" Command="{Binding ParentViewModel.DeleteSaveCommand, Mode=OneTime}" />
+                        <KeyBinding Key="Insert" Command="{Binding ParentViewModel.CreateSaveCommand, Mode=OneTime}" />
+                    </TextBox.InputBindings>
+                </TextBox>
+
+            </Grid>
+
+        </Grid>
+    </Grid>
+    
+    
+</Window>
