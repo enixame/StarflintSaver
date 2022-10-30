@@ -165,7 +165,7 @@ namespace StarFlintSaver.Windows.ViewModel
                 };
                 _jsonDataRepository.AddSaveFile(saveFile);
 
-            _messageAnimationManager.StartAnimation(this, "Save created !");
+                _messageAnimationManager.StartAnimation(this, "Save created !");
 
                 await UiDispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                 {
@@ -277,19 +277,9 @@ namespace StarFlintSaver.Windows.ViewModel
             if (SaveFiles.Count > 0)
             {
                 _saveAnimationManager.StartAnimation(this, "Saving...");
-               
-                await _jsonDataRepository.SaveAsJsonDataAsync(); 
+
+                await _jsonDataRepository.SaveAsJsonDataAsync();
             }
-        }
-
-        private async Task StartAnimationAsync(Action<bool> actionToRun, int animationDurationInSeconds)
-        {
-            actionToRun?.Invoke(true);
-
-            var duration = TimeSpan.FromSeconds(animationDurationInSeconds);
-
-            await Task.Delay(duration);
-            actionToRun?.Invoke(false);
         }
 
         public async Task CloseAndSaveAsync()

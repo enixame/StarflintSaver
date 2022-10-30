@@ -12,6 +12,7 @@ namespace StarFlintSaver.Windows.ViewModel
         }
 
         public ViewModelBase ParentViewModel { get; }
+
         public SaveFile SaveFile { get; }
 
         public string FileName => SaveFile.FileName;
