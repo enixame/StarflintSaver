@@ -12,6 +12,8 @@
     <Product>StarFlintSaver</Product>
     <AssemblyName>StarFlintSaver</AssemblyName>
     <StartupObject>StarFlintSaver.Windows.App</StartupObject>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>StarFlint.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

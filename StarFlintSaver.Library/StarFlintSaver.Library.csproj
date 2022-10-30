@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <Authors>Maxime LEONARD (The Last Engineer)</Authors>
+    <Product>StarFlintSaver</Product>
+    <Description>StarFlintSaver helps you to manage your saves for Starflint the Blackhole Prophecy game.</Description>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>StarFlint.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
