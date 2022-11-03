@@ -6,14 +6,12 @@ namespace StarFlintSaver.Library.Common
 {
     public sealed class DirectoryManager : IDirectoryManager
     {
-        private string _rootDirectory;
-        private string _starFlintSaverBaseDirectory;
-        private const string StarFlintSaverDirectory = "StarFlintSaver";
+        private readonly string _starFlintSaverBaseDirectory;
 
-        public DirectoryManager()
+        public DirectoryManager(IConfigurationFileLoader configurationFileLoader)
         {
-            _rootDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            _starFlintSaverBaseDirectory = Path.Combine(_rootDirectory, StarFlintSaverDirectory);
+            var configuration = configurationFileLoader.GetConfiguration();
+            _starFlintSaverBaseDirectory = configuration.StarFlintSaverBaseDirectory;
         }
 
         /// <summary>

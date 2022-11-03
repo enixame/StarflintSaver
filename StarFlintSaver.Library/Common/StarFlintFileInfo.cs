@@ -5,12 +5,12 @@ namespace StarFlintSaver.Library.Common
 {
     public sealed class StarFlintFileInfo : IStarFlintFileInfo
     {
-        private const string DefaultSaveFileName = "StarFlint_save_0.save";
-
-        public StarFlintFileInfo()
+        public StarFlintFileInfo(IConfigurationFileLoader configurationFileLoader)
         {
+            var configuration = configurationFileLoader.GetConfiguration();
+
             StarFlintRootFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "LocalLow", "PANTANG Studio", "StarFlint");
-            StarFlintSaveFileName = Path.Combine(StarFlintRootFolder, DefaultSaveFileName);
+            StarFlintSaveFileName = Path.Combine(StarFlintRootFolder, configuration.StarFlintSaveFileName);
         }
 
         public string StarFlintRootFolder { get; }

@@ -13,8 +13,10 @@ namespace StarFlintSaver.Windows.ViewModel
 
         public MainViewModel()
         {
-            IStarFlintFileInfo starFlintFileInfo = new StarFlintFileInfo();
-            IDirectoryManager directoryManager = new DirectoryManager();
+            IConfigurationFileLoader configurationFileLoader = new ConfigurationFileLoader();
+
+            IStarFlintFileInfo starFlintFileInfo = new StarFlintFileInfo(configurationFileLoader);
+            IDirectoryManager directoryManager = new DirectoryManager(configurationFileLoader);
 
             IJsonDataRepository jsonDataRepository = new JsonDataRepository(starFlintFileInfo);
             IStarFlintFilesManager starFlintFilesManager = new StarFlintFilesManager(directoryManager, starFlintFileInfo);
