@@ -19,10 +19,14 @@
   <ItemGroup>
     <None Remove="Icons\StarFlint.ico" />
     <None Remove="Icons\StarFlint.jpg" />
+    <None Remove="Images\explorer.jpg" />
     <None Remove="Images\Saver.jpg" />
     <Content Include="Icons\StarFlint.ico">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\explorer.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
