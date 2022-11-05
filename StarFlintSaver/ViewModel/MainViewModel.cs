@@ -1,8 +1,10 @@
 ﻿using StarFlintSaver.Library.Common;
 using StarFlintSaver.Windows.ConcurrentTask;
 using StarFlintSaver.Windows.Utils;
+using StarFlintSaver.Windows.WindowsFeatures;
 using System.Threading.Tasks;
 using System.Windows;
+using Clipboard = StarFlintSaver.Windows.WindowsFeatures.Clipboard;
 
 namespace StarFlintSaver.Windows.ViewModel
 {
@@ -13,10 +15,12 @@ namespace StarFlintSaver.Windows.ViewModel
 
         public MainViewModel()
         {
+            IClipboard clipboard = new Clipboard();
+            ISystemFeatures systemFeatures = new WindowsSystemFeatures(clipboard);
             IConfigurationFileLoader configurationFileLoader = new ConfigurationFileLoader();
 
             IStarFlintFileInfo starFlintFileInfo = new StarFlintFileInfo(configurationFileLoader);
-            IDirectoryManager directoryManager = new DirectoryManager(configurationFileLoader);
+            IDirectoryManager directoryManager = new DirectoryManager(configurationFileLoader, systemFeatures);
 
             IJsonDataRepository jsonDataRepository = new JsonDataRepository(starFlintFileInfo);
             IStarFlintFilesManager starFlintFilesManager = new StarFlintFilesManager(directoryManager, starFlintFileInfo);
@@ -25,7 +29,7 @@ namespace StarFlintSaver.Windows.ViewModel
             _taskDispatcher = new TaskDispatcher();
             _taskDispatcher.OnError += TaskDispatcherOnError;
 
-            FileManager = new SaveManagerViewModel(jsonDataRepository, starFlintFilesManager, fileSynchronisationProcess, _taskDispatcher);
+            FileManager = new SaveManagerViewModel(jsonDataRepository, starFlintFilesManager, fileSynchronisationProcess, directoryManager, _taskDispatcher);
             var task = Task.Run(async () => await FileManager.LoadDataAsync());
             task.ThrowExceptionInUiThread();
         }

@@ -7,11 +7,13 @@ namespace StarFlintSaver.Library.Common
     public sealed class DirectoryManager : IDirectoryManager
     {
         private readonly string _starFlintSaverBaseDirectory;
+        private readonly ISystemFeatures _systemFeatures;
 
-        public DirectoryManager(IConfigurationFileLoader configurationFileLoader)
+        public DirectoryManager(IConfigurationFileLoader configurationFileLoader, ISystemFeatures systemFeatures)
         {
             var configuration = configurationFileLoader.GetConfiguration();
             _starFlintSaverBaseDirectory = configuration.StarFlintSaverBaseDirectory;
+            _systemFeatures = systemFeatures;
         }
 
         /// <summary>
@@ -44,6 +46,21 @@ namespace StarFlintSaver.Library.Common
         {
             var directoryInfo = new DirectoryInfo(_starFlintSaverBaseDirectory);
             return directoryInfo.EnumerateFiles();
+        }
+
+        public void OpenRootDirectory()
+        {
+            _systemFeatures.OpenFolder(_starFlintSaverBaseDirectory);
+        }
+
+        public void SelectFileInDirectory(string filePath)
+        {
+            _systemFeatures.OpenFolderAndSelectFile(filePath);
+        }
+
+        public void CopyFileToClipboard(string filePath)
+        {
+            _systemFeatures.CopyFileToSystemClipboard(filePath);
         }
     }
 }

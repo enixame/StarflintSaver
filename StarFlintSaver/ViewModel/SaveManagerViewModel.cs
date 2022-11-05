@@ -11,11 +11,12 @@ using System.Windows.Threading;
 
 namespace StarFlintSaver.Windows.ViewModel
 {
-    public sealed class SaveManagerViewModel : ViewModelBase
+    public sealed class SaveManagerViewModel : ViewModelBase, ISaveManagerViewModel
     {
         private readonly IJsonDataRepository _jsonDataRepository;
         private readonly IStarFlintFilesManager _starFlintFilesManager;
         private readonly IFileSynchronisationProcess _fileSynchronisationProcess;
+        private readonly IDirectoryManager _directoryManager;
         private readonly ITaskDispatcher _taskDispatcher;
 
         private readonly ViewModelAnimationManager<SaveManagerViewModel> _messageAnimationManager;
@@ -32,20 +33,23 @@ namespace StarFlintSaver.Windows.ViewModel
             IJsonDataRepository jsonDataRepository,
             IStarFlintFilesManager starFlintFilesManager,
             IFileSynchronisationProcess fileSynchronisationProcess,
+            IDirectoryManager directoryManager,
             ITaskDispatcher taskDispatcher)
         {
             _jsonDataRepository = jsonDataRepository;
             _starFlintFilesManager = starFlintFilesManager;
             _fileSynchronisationProcess = fileSynchronisationProcess;
+            _directoryManager = directoryManager;
             _taskDispatcher = taskDispatcher;
 
             _messageAnimationManager = new ViewModelAnimationManager<SaveManagerViewModel>(5, (viewModel) => viewModel.MessageAnimationStarting, (ViewModel) => ViewModel.Message);
             _saveAnimationManager = new ViewModelAnimationManager<SaveManagerViewModel>(2, (viewModel) => viewModel.SavingInProgress, (ViewModel) => ViewModel.SaveMessage);
 
             CreateSaveCommand = new DelegateAsyncCommand(CreateSaveAsync, () => !ResyncProcessIsRunning);
-            LoadSaveCommand = new DelegateAsyncCommand(LoadSaveAsync, () => SelectedSaveFile != null && !ResyncProcessIsRunning);
-            DeleteSaveCommand = new DelegateAsyncCommand(DeleteSaveAsync, () => SelectedSaveFile != null && !ResyncProcessIsRunning);
+            LoadSaveCommand = new DelegateAsyncCommand<SaveFileViewModel>(LoadSaveAsync, (saveFileViewModel) => SelectedSaveFile != null && !ResyncProcessIsRunning);
+            DeleteSaveCommand = new DelegateAsyncCommand<SaveFileViewModel>(DeleteSaveAsync, (saveFileViewModel) => SelectedSaveFile != null && !ResyncProcessIsRunning);
             ResyncCommand = new DelegateAsyncCommand(ResyncSaveFilesAsync, () => !ResyncProcessIsRunning);
+            OpenRootFolderCommand = new DelegateAsyncCommand(OpenRootFolderCommandAsync);
         }
 
         public ObservableCollection<SaveFileViewModel> SaveFiles { get; } = new ObservableCollection<SaveFileViewModel>();
@@ -146,11 +150,13 @@ namespace StarFlintSaver.Windows.ViewModel
 
         public IDelegateAsyncCommand CreateSaveCommand { get; }
 
-        public IDelegateAsyncCommand LoadSaveCommand { get; }
+        public IDelegateAsyncCommand<SaveFileViewModel> LoadSaveCommand { get; }
 
-        public IDelegateAsyncCommand DeleteSaveCommand { get; }
+        public IDelegateAsyncCommand<SaveFileViewModel> DeleteSaveCommand { get; }
 
         public IDelegateAsyncCommand ResyncCommand { get; }
+
+        public IDelegateAsyncCommand OpenRootFolderCommand { get; }
 
         private async Task CreateSaveAsync()
         {
@@ -165,8 +171,6 @@ namespace StarFlintSaver.Windows.ViewModel
                 };
                 _jsonDataRepository.AddSaveFile(saveFile);
 
-                _messageAnimationManager.StartAnimation(this, "Save created !");
-
                 await UiDispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                 {
                     var saveFileViewModel = new SaveFileViewModel(this, saveFile);
@@ -178,34 +182,35 @@ namespace StarFlintSaver.Windows.ViewModel
                 }));
 
                 _taskDispatcher.ExecuteTask(SaveDataAsync);
+                _messageAnimationManager.StartAnimation(this, "Save created !");
             });
         }
 
-        private async Task LoadSaveAsync()
+        public async Task LoadSaveAsync(SaveFileViewModel saveFileViewModel)
         {
-            _messageAnimationManager.StartAnimation(this, "Save loaded !");
-
             await Task.Run(() =>
             {
-                _starFlintFilesManager.LoadSave(SelectedSaveFile.FileName);
+                _starFlintFilesManager.LoadSave(saveFileViewModel.FileName);
             });
+
+            _messageAnimationManager.StartAnimation(this, "Save loaded !");
         }
 
-        private async Task DeleteSaveAsync()
+        public async Task DeleteSaveAsync(SaveFileViewModel saveFileViewModel)
         {
-            var messageBoxResult = MessageBoxHelper.ShowMessage($"Do you want to delete {SelectedSaveFile.SaveFileInfo} ?", "Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var messageBoxResult = MessageBoxHelper.ShowMessage($"Do you want to delete {saveFileViewModel.SaveFileInfo} ?", "Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (messageBoxResult == MessageBoxResult.No)
             {
                 return;
             }
 
-            _starFlintFilesManager.DeleteSave(SelectedSaveFile.FileName);
-            _jsonDataRepository.DeleteSaveFile(SelectedSaveFile.SaveFile);
+            _starFlintFilesManager.DeleteSave(saveFileViewModel.FileName);
+            _jsonDataRepository.DeleteSaveFile(saveFileViewModel.SaveFile);
 
             await UiDispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
-                SelectedSaveFile.PropertyChanged -= SaveFileViewModelPropertyChanged;
-                SaveFiles.Remove(SelectedSaveFile);
+                saveFileViewModel.PropertyChanged -= SaveFileViewModelPropertyChanged;
+                SaveFiles.Remove(saveFileViewModel);
                 NotifyPropertyChanged(nameof(SaveFiles));
                 NotifyPropertyChanged(nameof(TotalSaveFilesCountDescription));
                 SelectedSaveFile = null;
@@ -254,6 +259,11 @@ namespace StarFlintSaver.Windows.ViewModel
             }
         }
 
+        public async Task OpenRootFolderCommandAsync()
+        {
+            await Task.Run(() => _directoryManager.OpenRootDirectory());
+        }
+
         public async Task LoadDataAsync()
         {
             var saveFiles = await _jsonDataRepository.LoadFromJsonDataAsync();
@@ -294,6 +304,17 @@ namespace StarFlintSaver.Windows.ViewModel
             {
                 _taskDispatcher.ExecuteTask(SaveDataAsync);
             }
+        }
+
+        public void SelectFile(string filePath)
+        {
+            _directoryManager.SelectFileInDirectory(filePath);
+        }
+
+        public void CopyFile(string filePath)
+        {
+            _directoryManager.CopyFileToClipboard(filePath);
+            _messageAnimationManager.StartAnimation(this, "Save copied !");
         }
     }
 }
