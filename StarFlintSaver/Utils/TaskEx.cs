@@ -9,6 +9,7 @@ namespace StarFlintSaver.Windows.Utils
     {
         public static void ThrowExceptionInUiThread(this Task task)
         {
+            var test = "ok";
             task.ContinueWith(previous =>
             {
                 if (previous.Exception != null)
