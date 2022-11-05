@@ -10,5 +10,6 @@ namespace StarFlintSaver.Library.Common
         DirectoryInfo CreateNewDirectory(string directoryName);
         void OpenRootDirectory();
         void SelectFileInDirectory(string filePath);
+        void CopyFileToClipboard(string filePath);
     }
 }

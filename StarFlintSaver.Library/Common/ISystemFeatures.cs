@@ -5,5 +5,7 @@
         void OpenFolder(string folderPath);
 
         void OpenFolderAndSelectFile(string filePath);
+
+        void CopyFileToSystemClipboard(string filePath);
     }
 }

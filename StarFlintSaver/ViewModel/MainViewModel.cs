@@ -4,6 +4,7 @@ using StarFlintSaver.Windows.Utils;
 using StarFlintSaver.Windows.WindowsFeatures;
 using System.Threading.Tasks;
 using System.Windows;
+using Clipboard = StarFlintSaver.Windows.WindowsFeatures.Clipboard;
 
 namespace StarFlintSaver.Windows.ViewModel
 {
@@ -14,7 +15,8 @@ namespace StarFlintSaver.Windows.ViewModel
 
         public MainViewModel()
         {
-            ISystemFeatures systemFeatures = new WindowsSystemFeatures();
+            IClipboard clipboard = new Clipboard();
+            ISystemFeatures systemFeatures = new WindowsSystemFeatures(clipboard);
             IConfigurationFileLoader configurationFileLoader = new ConfigurationFileLoader();
 
             IStarFlintFileInfo starFlintFileInfo = new StarFlintFileInfo(configurationFileLoader);

@@ -57,5 +57,10 @@ namespace StarFlintSaver.Library.Common
         {
             _systemFeatures.OpenFolderAndSelectFile(filePath);
         }
+
+        public void CopyFileToClipboard(string filePath)
+        {
+            _systemFeatures.CopyFileToSystemClipboard(filePath);
+        }
     }
 }

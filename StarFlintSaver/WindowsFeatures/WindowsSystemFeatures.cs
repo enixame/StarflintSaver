@@ -6,6 +6,12 @@ namespace StarFlintSaver.Windows.WindowsFeatures
     public sealed class WindowsSystemFeatures : ISystemFeatures
     {
         private const string ExplorerProcessName = "explorer.exe";
+        private readonly IClipboard _clipboard;
+
+        public WindowsSystemFeatures(IClipboard clipboard)
+        {
+            _clipboard = clipboard;
+        }
 
         public void OpenFolder(string folderPath)
         {
@@ -35,6 +41,11 @@ namespace StarFlintSaver.Windows.WindowsFeatures
             {
                 explorerProcess?.Dispose();
             }
+        }
+
+        public void CopyFileToSystemClipboard(string filePath)
+        {
+            _clipboard.CopyFile(filePath);
         }
     }
 }

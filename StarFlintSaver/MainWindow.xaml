@@ -3,15 +3,17 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:behaviors="clr-namespace:StarFlintSaver.Windows.Behaviours"
+        xmlns:behaviors="clr-namespace:StarFlintSaver.Windows.Behaviours" 
+        xmlns:System="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d"
         Title="StarFlint Saver" MinHeight="600" MinWidth="1000"
         Closing="Window_Closing">
 
     <Window.InputBindings>
         <KeyBinding Key="F2" Command="{Binding FileManager.CreateSaveCommand, Mode=OneTime}" />
-        <KeyBinding Key="Insert" Command="{Binding FileManager.CreateSaveCommand, Mode=OneTime}" />
-        <KeyBinding Key="F5" Command="{Binding FileManager.LoadSaveCommand, Mode=OneTime}" />
+        <KeyBinding Key="Insert" Command="{Binding FileManager.CreateSaveCommand, Mode=OneTime}"/>
+        <KeyBinding Key="F5" Command="{Binding FileManager.LoadSaveCommand, Mode=OneTime}" CommandParameter="{Binding FileManager.SelectedSaveFile, Mode=OneWay}"/>
+        <KeyBinding Key="Delete" Command="{Binding FileManager.DeleteSaveCommand, Mode=OneTime}" CommandParameter="{Binding FileManager.SelectedSaveFile, Mode=OneWay}"/>
     </Window.InputBindings>
 
     <Grid>
@@ -29,6 +31,32 @@
                 <DoubleAnimation Storyboard.TargetProperty="(TextBlock.Opacity)" 
                                 From="0" To="1" Duration="0:0:0.5" RepeatBehavior="Forever" AutoReverse="True"/>
             </Storyboard>
+
+            <Style x:Key="ButtonIconStyle" TargetType="{x:Type Button}">
+                <Setter Property="Height" Value="16"/>
+                <Setter Property="Width" Value="16"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+            </Style>
+
+            <Style x:Key="LargeButtonIconStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonIconStyle}">
+                <Setter Property="Height" Value="24"/>
+                <Setter Property="Width" Value="24"/>
+            </Style>
+
+            <System:String x:Key="LoadSaveText">Load this save</System:String>
+            <System:String x:Key="DeleteSaveText">Delete this save</System:String>
+            <System:String x:Key="LocateAndSelectSaveText">Locate and select save file in the root folder</System:String>
+            <System:String x:Key="CopySaveToClipBoardText">Copy save file to clipboard</System:String>
+            <System:String x:Key="OpenRootFolderText">Open saves root folder</System:String>
+
+            <BitmapImage x:Key="OpenFolderIcon" UriSource="../Images/openfolder.png" />
+            <BitmapImage x:Key="ExplorerIcon" UriSource="../Images/explorer.png" />
+            <BitmapImage x:Key="FileIcon" UriSource="../Images/file.png" />
+            <BitmapImage x:Key="LoadIcon" UriSource="../Images/load.png" />
+            <BitmapImage x:Key="DeleteIcon" UriSource="../Images/delete.png" />
+            <BitmapImage x:Key="NewIcon" UriSource="../Images/new.png" />
+            <BitmapImage x:Key="SynchroIcon" UriSource="../Images/synchro.png" />
         </Grid.Resources>
 
         <Grid Background="{StaticResource BackgroundColor}">
@@ -44,7 +72,42 @@
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
 
-            <Image Source="Images/Saver.jpg" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" />
+            <Image Source="Images/saver.jpg" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" />
+
+            <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" DataContext="{Binding FileManager}">
+                <Button Margin="10" MaxHeight="50" MinWidth="200" FontSize="18" FontWeight="Heavy" 
+                        Command="{Binding CreateSaveCommand, Mode=OneTime}" HorizontalAlignment="Left" 
+                        Background="{StaticResource LoadSaveButtonsColor}" Foreground="White">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Create Save (F2)"/>
+                            <Image Source="{StaticResource NewIcon}" Height="16" Width="16" Margin="10 0 0 0"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+
+                <Button Margin="10" MaxHeight="50" MinWidth="200" FontSize="18" FontWeight="Heavy" 
+                        Command="{Binding DeleteSaveCommand, Mode=OneTime}" CommandParameter="{Binding SelectedSaveFile, Mode=OneWay}" HorizontalAlignment="Left" 
+                        Background="{StaticResource DeleteButtonsColor}" Foreground="White">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Delete Save (Del)"/>
+                            <Image Source="{StaticResource DeleteIcon}" Height="16" Width="16" Margin="10 0 0 0"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+
+                <Button Margin="10" MaxHeight="50" MinWidth="200" FontSize="18" FontWeight="Heavy"
+                        Command="{Binding LoadSaveCommand, Mode=OneTime}" CommandParameter="{Binding SelectedSaveFile, Mode=OneWay}" HorizontalAlignment="Left"
+                        Background="{StaticResource LoadSaveButtonsColor}" Foreground="White">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Load Save (F5)"/>
+                            <Image Source="{StaticResource LoadIcon}" Height="16" Width="16" Margin="10 0 0 0"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
 
             <ListBox Grid.Column="0" Grid.Row="2" 
                  ScrollViewer.HorizontalScrollBarVisibility="Auto" 
@@ -60,19 +123,48 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="1*"/>
                                 <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
                                 <ColumnDefinition Width="3*"/>
                             </Grid.ColumnDefinitions>
+                            
                             <TextBlock Grid.Column="0" Text="{Binding SaveFileInfo, Mode=OneTime}"  VerticalAlignment="Center"
                                    Margin="2" FontWeight="Bold" FontSize="16"/>
+                            
                             <TextBlock Grid.Column="1" Text="{Binding ShortFileName, Mode=OneTime}" VerticalAlignment="Center"
                                    Margin="5 2 2 2" FontWeight="DemiBold"  FontSize="12" TextWrapping="Wrap"/>
-                            <Button Grid.Column="2" Margin="5" Height="16" Width="16" Background="Transparent" Command="{Binding SelectFileCommand, Mode=OneTime}">
+
+                            <Button Grid.Column="2" Margin="5" Style="{StaticResource ButtonIconStyle}" 
+                                    Command="{Binding LoadSaveCommand, Mode=OneTime}" ToolTip="{StaticResource LoadSaveText}">
                                 <Button.Content>
-                                    <Image Source="Images/explorer.jpg" Margin="0"/>
+                                    <Image Source="{StaticResource LoadIcon}" Margin="0"/>
                                 </Button.Content>
                             </Button>
-                            <TextBlock Grid.Column="3" Text="{Binding Description, Mode=OneWay}" 
+
+                            <Button Grid.Column="3" Margin="5 5 10 5" Style="{StaticResource ButtonIconStyle}" 
+                                    Command="{Binding DeleteSaveCommand, Mode=OneTime}" ToolTip="{StaticResource DeleteSaveText}">
+                                <Button.Content>
+                                    <Image Source="{StaticResource DeleteIcon}" Margin="0"/>
+                                </Button.Content>
+                            </Button>
+
+                            <Button Grid.Column="4" Margin="5" Style="{StaticResource ButtonIconStyle}" 
+                                    Command="{Binding SelectFileCommand, Mode=OneTime}" ToolTip="{StaticResource LocateAndSelectSaveText}">
+                                <Button.Content>
+                                    <Image Source="{StaticResource ExplorerIcon}" Margin="0"/>
+                                </Button.Content>
+                            </Button>
+
+                            <Button Grid.Column="5" Margin="5" Style="{StaticResource ButtonIconStyle}" 
+                                    Command="{Binding CopyFileCommand, Mode=OneTime}" ToolTip="{StaticResource CopySaveToClipBoardText}">
+                                <Button.Content>
+                                    <Image Source="{StaticResource FileIcon}" Margin="0"/>
+                                </Button.Content>
+                            </Button>
+
+                            <TextBlock Grid.Column="6" Text="{Binding Description, Mode=OneWay}" 
                                    VerticalAlignment="Center" Margin="5 2 2 2" FontSize="14"
                                    TextWrapping="Wrap" Foreground="White" MinWidth="50"/>
                         </Grid>
@@ -83,21 +175,55 @@
                                 <ColumnDefinition Width="1*"/>
                                 <ColumnDefinition Width="200"/>
                                 <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="{Binding SaveFileInfo, Mode=OneTime}"  VerticalAlignment="Center"
                                    Margin="2" FontWeight="Bold" FontSize="16"/>
+                            
                             <TextBlock Grid.Column="1" Text="{Binding ShortFileName, Mode=OneTime}" VerticalAlignment="Center"
                                    Margin="5 2 2 2" FontWeight="DemiBold"  FontSize="12" TextWrapping="Wrap"/>
+                            
                             <TextBox Grid.Column="2" Text="{Binding Description, Delay=500, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                    VerticalAlignment="Center" Margin="5 0 2 0" FontSize="14"
                                    AcceptsReturn="True" TextWrapping="Wrap" Background="{StaticResource BackgroundColor}"
                                    Foreground="White" BorderThickness="0" MinWidth="50"
                                    behaviors:TextBoxBehavior.EnforceFocus="True">
                                 <TextBox.InputBindings>
-                                    <KeyBinding Key="Delete" Command="{Binding ParentViewModel.DeleteSaveCommand, Mode=OneTime}" />
+                                    <KeyBinding Key="Delete" Command="{Binding DeleteSaveCommand, Mode=OneTime}" />
                                     <KeyBinding Key="Insert" Command="{Binding ParentViewModel.CreateSaveCommand, Mode=OneTime}" />
                                 </TextBox.InputBindings>
                             </TextBox>
+
+                            <Button Grid.Column="3" Margin="5" Style="{StaticResource ButtonIconStyle}" 
+                                    Command="{Binding LoadSaveCommand, Mode=OneTime}" ToolTip="{StaticResource LoadSaveText}">
+                                <Button.Content>
+                                    <Image Source="{StaticResource LoadIcon}" Margin="0"/>
+                                </Button.Content>
+                            </Button>
+
+                            <Button Grid.Column="4" Margin="5 5 10 5" Style="{StaticResource ButtonIconStyle}" 
+                                    Command="{Binding DeleteSaveCommand, Mode=OneTime}" ToolTip="{StaticResource DeleteSaveText}">
+                                <Button.Content>
+                                    <Image Source="{StaticResource DeleteIcon}" Margin="0"/>
+                                </Button.Content>
+                            </Button>
+
+                            <Button Grid.Column="5" Margin="5" Style="{StaticResource ButtonIconStyle}" 
+                                    Command="{Binding SelectFileCommand, Mode=OneTime}" ToolTip="{StaticResource LocateAndSelectSaveText}">
+                                <Button.Content>
+                                    <Image Source="{StaticResource ExplorerIcon}" Margin="0"/>
+                                </Button.Content>
+                            </Button>
+
+                            <Button Grid.Column="6" Margin="5" Style="{StaticResource ButtonIconStyle}" 
+                                    Command="{Binding CopyFileCommand, Mode=OneTime}" ToolTip="{StaticResource CopySaveToClipBoardText}">
+                                <Button.Content>
+                                    <Image Source="{StaticResource FileIcon}" Margin="0"/>
+                                </Button.Content>
+                            </Button>
                         </Grid>
                     </DataTemplate>
                 </ListBox.Resources>
@@ -123,80 +249,21 @@
                 </ListBox.ItemContainerStyle>
             </ListBox>
 
-            <StackPanel Orientation="Horizontal" Margin="5" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2">
-                <TextBlock Text="{Binding FileManager.TotalSaveFilesCountDescription, Mode=OneWay}"
-                       HorizontalAlignment="Left" VerticalAlignment="Center"
-                       FontWeight="Bold" FontSize="16" Foreground="White" Margin="2 2 5 2"/>
-                
-                <Button Margin="10" MaxHeight="50" MinWidth="200" Content="Resync from disk" FontSize="20" FontWeight="Heavy" 
-                        HorizontalAlignment="Left" Background="{StaticResource ResyncButtonsColor}" 
-                        Command="{Binding FileManager.ResyncCommand, Mode=OneTime}"
-                        Foreground="White"/>
+            <Grid Grid.Column="1" Grid.Row="2" Margin="5" DataContext="{Binding FileManager.SelectedSaveFile, Mode=OneWay}">
 
-                <Button Margin="10" MaxHeight="50" MinWidth="200" Content="Open Saves Folder" FontSize="20" FontWeight="Heavy" 
-                        HorizontalAlignment="Left" Background="{StaticResource OpenFolderButtonsColor}" 
-                        Command="{Binding FileManager.OpenRootFolderCommand, Mode=OneTime}"
-                        Foreground="White"/>
+                <Grid.Resources>
+                    <Style x:Key="SelectedButtonButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonIconStyle}">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Resources>
 
-                <TextBlock Text="{Binding FileManager.Message, Mode=OneWay}"
-                       Foreground="{StaticResource MessageColor}" HorizontalAlignment="Left" VerticalAlignment="Center"
-                       FontSize="22" FontWeight="Heavy" Margin="5">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding FileManager.MessageAnimationStarting, Mode=OneWay}" Value="True">
-                                    <DataTrigger.EnterActions>
-                                        <BeginStoryboard Storyboard="{StaticResource BlinkStoryboard}" x:Name="BeginMessageAnimation"/>
-                                    </DataTrigger.EnterActions>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding FileManager.MessageAnimationStarting, Mode=OneWay}" Value="False">
-                                    <DataTrigger.EnterActions>
-                                        <PauseStoryboard BeginStoryboardName="BeginMessageAnimation"/>
-                                    </DataTrigger.EnterActions>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-
-                <TextBlock Text="{Binding FileManager.SaveMessage, Mode=OneWay}" MinWidth="100"
-                       Foreground="{StaticResource SaveMessageColor}" HorizontalAlignment="Left" VerticalAlignment="Center"
-                       FontSize="14" FontWeight="SemiBold" Margin="2">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding FileManager.SavingInProgress, Mode=OneWay}" Value="True">
-                                    <DataTrigger.EnterActions>
-                                        <BeginStoryboard Storyboard="{StaticResource BlinkStoryboard}" x:Name="BeginSaveAnimation"/>
-                                    </DataTrigger.EnterActions>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding FileManager.SavingInProgress, Mode=OneWay}" Value="False">
-                                    <DataTrigger.EnterActions>
-                                        <PauseStoryboard BeginStoryboardName="BeginSaveAnimation"/>
-                                    </DataTrigger.EnterActions>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-            </StackPanel>
-
-            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
-                <Button Margin="10" MaxHeight="50" MinWidth="200" Content="Create Save (F2)" FontSize="18" FontWeight="Heavy" 
-                        Command="{Binding FileManager.CreateSaveCommand, Mode=OneTime}" HorizontalAlignment="Left" 
-                        Background="{StaticResource LoadSaveButtonsColor}" Foreground="White"/>
-                <Button Margin="10" MaxHeight="50" MinWidth="200" Content="Delete Save (Del)" FontSize="18" FontWeight="Heavy" 
-                        Command="{Binding FileManager.DeleteSaveCommand, Mode=OneTime}" HorizontalAlignment="Left" 
-                        Background="{StaticResource DeleteButtonsColor}" Foreground="White"/>
-                <Button Margin="10" MaxHeight="50" MinWidth="200" Content="Load Save (F5)" FontSize="18" FontWeight="Heavy"
-                        Command="{Binding FileManager.LoadSaveCommand, Mode=OneTime}" HorizontalAlignment="Left"
-                        Background="{StaticResource LoadSaveButtonsColor}" Foreground="White"/>
-            </StackPanel>
-            
-            <Grid Grid.Column="1" Grid.Row="2" Margin="5"
-              DataContext="{Binding FileManager.SelectedSaveFile, Mode=OneWay}">
                 <Grid.Style>
-                    <Style TargetType="Grid">
+                    <Style TargetType="{x:Type Grid}">
                         <Setter Property="IsEnabled" Value="True"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding}" Value="{x:Null}">
@@ -205,10 +272,11 @@
                         </Style.Triggers>
                     </Style>
                 </Grid.Style>
-                
+
                 <Grid.RowDefinitions>
                     <RowDefinition Height="60"/>
                     <RowDefinition Height="40"/>
+                    <RowDefinition Height="25"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
@@ -218,17 +286,118 @@
                 <TextBlock Grid.Row="1" Text="{Binding ShortFileName, Mode=OneTime}" TextWrapping="Wrap"
                        HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Foreground="White"/>
 
-                <TextBox Grid.Row="2" Text="{Binding Description, Delay=500, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="2">
+
+                    <Button Margin="5" Height="16" Width="16" Background="Transparent" BorderThickness="0" Command="{Binding LoadSaveCommand, Mode=OneTime}"
+                            Style="{StaticResource SelectedButtonButtonStyle}" ToolTip="{StaticResource LoadSaveText}">
+                        <Button.Content>
+                            <Image Source="{StaticResource LoadIcon}" Margin="0"/>
+                        </Button.Content>
+                    </Button>
+
+                    <Button Margin="5 5 20 5" Command="{Binding DeleteSaveCommand, Mode=OneTime}"
+                            Style="{StaticResource SelectedButtonButtonStyle}" ToolTip="{StaticResource DeleteSaveText}">
+                        <Button.Content>
+                            <Image Source="{StaticResource DeleteIcon}" Margin="0"/>
+                        </Button.Content>
+                    </Button>
+
+                    <Button Margin="5" Command="{Binding ParentViewModel.OpenRootFolderCommand, Mode=OneTime}"
+                            Style="{StaticResource SelectedButtonButtonStyle}" ToolTip="{StaticResource OpenRootFolderText}">
+                        <Button.Content>
+                            <Image Source="{StaticResource OpenFolderIcon}" Margin="0"/>
+                        </Button.Content>
+                    </Button>
+
+                    <Button Margin="5" Command="{Binding SelectFileCommand, Mode=OneTime}"
+                            Style="{StaticResource SelectedButtonButtonStyle}" ToolTip="{StaticResource LocateAndSelectSaveText}">
+                        <Button.Content>
+                            <Image Source="{StaticResource ExplorerIcon}" Margin="0"/>
+                        </Button.Content>
+                    </Button>
+
+                    <Button Margin="5" Command="{Binding CopyFileCommand, Mode=OneTime}"
+                            Style="{StaticResource SelectedButtonButtonStyle}" ToolTip="{StaticResource CopySaveToClipBoardText}">
+                        <Button.Content>
+                            <Image Source="{StaticResource FileIcon}" Margin="0"/>
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
+
+                <TextBox Grid.Row="3" Text="{Binding Description, Delay=500, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                      TextWrapping="Wrap" AcceptsReturn="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" 
                      ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="10 10 10 2"  Background="{StaticResource BackgroundColor}"
                      Foreground="White" FontSize="16">
                     <TextBox.InputBindings>
-                        <KeyBinding Key="Delete" Command="{Binding ParentViewModel.DeleteSaveCommand, Mode=OneTime}" />
+                        <KeyBinding Key="Delete" Command="{Binding DeleteSaveCommand, Mode=OneTime}" />
                         <KeyBinding Key="Insert" Command="{Binding ParentViewModel.CreateSaveCommand, Mode=OneTime}" />
                     </TextBox.InputBindings>
                 </TextBox>
 
             </Grid>
+
+            <StackPanel Orientation="Horizontal" Margin="5" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" DataContext="{Binding FileManager}">
+
+                <Button Margin="10" Command="{Binding OpenRootFolderCommand, Mode=OneTime}"
+                            Style="{StaticResource LargeButtonIconStyle}" ToolTip="{StaticResource OpenRootFolderText}">
+                    <Button.Content>
+                        <Image Source="{StaticResource OpenFolderIcon}" Margin="0"/>
+                    </Button.Content>
+                </Button>
+
+                <Button Margin="10" Command="{Binding ResyncCommand, Mode=OneTime}"
+                            Style="{StaticResource LargeButtonIconStyle}" ToolTip="Resync from disk">
+                    <Button.Content>
+                        <Image Source="{StaticResource SynchroIcon}" Margin="0"/>
+                    </Button.Content>
+                </Button>
+
+                <TextBlock Text="{Binding TotalSaveFilesCountDescription, Mode=OneWay}"
+                       HorizontalAlignment="Left" VerticalAlignment="Center"
+                       FontWeight="Bold" FontSize="16" Foreground="White" Margin="2 2 5 2"/>
+
+                <TextBlock Text="{Binding Message, Mode=OneWay}"
+                       Foreground="{StaticResource MessageColor}" HorizontalAlignment="Left" VerticalAlignment="Center"
+                       FontSize="22" FontWeight="Heavy" Margin="5">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding MessageAnimationStarting, Mode=OneWay}" Value="True">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard Storyboard="{StaticResource BlinkStoryboard}" x:Name="BeginMessageAnimation"/>
+                                    </DataTrigger.EnterActions>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding MessageAnimationStarting, Mode=OneWay}" Value="False">
+                                    <DataTrigger.EnterActions>
+                                        <PauseStoryboard BeginStoryboardName="BeginMessageAnimation"/>
+                                    </DataTrigger.EnterActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <TextBlock Text="{Binding SaveMessage, Mode=OneWay}" MinWidth="100"
+                       Foreground="{StaticResource SaveMessageColor}" HorizontalAlignment="Left" VerticalAlignment="Center"
+                       FontSize="14" FontWeight="SemiBold" Margin="2">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SavingInProgress, Mode=OneWay}" Value="True">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard Storyboard="{StaticResource BlinkStoryboard}" x:Name="BeginSaveAnimation"/>
+                                    </DataTrigger.EnterActions>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SavingInProgress, Mode=OneWay}" Value="False">
+                                    <DataTrigger.EnterActions>
+                                        <PauseStoryboard BeginStoryboardName="BeginSaveAnimation"/>
+                                    </DataTrigger.EnterActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </StackPanel>
 
         </Grid>
     </Grid>

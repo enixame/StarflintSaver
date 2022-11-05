@@ -19,20 +19,44 @@
   <ItemGroup>
     <None Remove="Icons\StarFlint.ico" />
     <None Remove="Icons\StarFlint.jpg" />
-    <None Remove="Images\explorer.jpg" />
+    <None Remove="Images\delete.png" />
+    <None Remove="Images\explorer.png" />
+    <None Remove="Images\file.png" />
+    <None Remove="Images\load.png" />
+    <None Remove="Images\new.png" />
+    <None Remove="Images\openfolder.png" />
     <None Remove="Images\Saver.jpg" />
+    <None Remove="Images\synchro.png" />
     <Content Include="Icons\StarFlint.ico">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\explorer.jpg">
+    <Content Include="Images\delete.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\explorer.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\file.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\load.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\new.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\openfolder.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Images\Saver.jpg">
+    <Content Include="Images\saver.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\synchro.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
