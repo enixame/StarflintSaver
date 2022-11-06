@@ -1,0 +1,120 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:behaviors="clr-namespace:StarFlintSaver.Windows.Behaviours"
+                    xmlns:viewModels="clr-namespace:StarFlintSaver.Windows.ViewModel">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="StarFlintResources.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <DataTemplate x:Key="DefaultTemplate" DataType="{x:Type viewModels:SaveFileViewModel}">
+        <Grid Margin="0,2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Text="{Binding SaveFileInfo, Mode=OneTime}"  VerticalAlignment="Center"
+                                   Margin="2" FontWeight="Bold" FontSize="16"/>
+
+            <TextBlock Grid.Column="1" Text="{Binding ShortFileName, Mode=OneTime}" VerticalAlignment="Center"
+                                   Margin="5 2 2 2" FontWeight="DemiBold"  FontSize="12" TextWrapping="Wrap"/>
+
+            <Button Grid.Column="2" Margin="5" Style="{StaticResource ButtonIconStyle}" 
+                                    Command="{Binding LoadSaveCommand, Mode=OneTime}" ToolTip="{StaticResource LoadSaveText}">
+                <Button.Content>
+                    <Image Source="{StaticResource LoadIcon}" Margin="0"/>
+                </Button.Content>
+            </Button>
+
+            <Button Grid.Column="3" Margin="5 5 10 5" Style="{StaticResource ButtonIconStyle}" 
+                                    Command="{Binding DeleteSaveCommand, Mode=OneTime}" ToolTip="{StaticResource DeleteSaveText}">
+                <Button.Content>
+                    <Image Source="{StaticResource DeleteIcon}" Margin="0"/>
+                </Button.Content>
+            </Button>
+
+            <Button Grid.Column="4" Margin="5" Style="{StaticResource ButtonIconStyle}" 
+                                    Command="{Binding SelectFileCommand, Mode=OneTime}" ToolTip="{StaticResource LocateAndSelectSaveText}">
+                <Button.Content>
+                    <Image Source="{StaticResource ExplorerIcon}" Margin="0"/>
+                </Button.Content>
+            </Button>
+
+            <Button Grid.Column="5" Margin="5" Style="{StaticResource ButtonIconStyle}" 
+                                    Command="{Binding CopyFileCommand, Mode=OneTime}" ToolTip="{StaticResource CopySaveToClipBoardText}">
+                <Button.Content>
+                    <Image Source="{StaticResource FileIcon}" Margin="0"/>
+                </Button.Content>
+            </Button>
+
+            <TextBlock Grid.Column="6" Text="{Binding Description, Mode=OneWay}" 
+                                   VerticalAlignment="Center" Margin="5 2 2 2" FontSize="14"
+                                   TextWrapping="Wrap" Foreground="White" MinWidth="50"/>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="EditTemplate" DataType="{x:Type viewModels:SaveFileViewModel}">
+        <Grid Margin="0,2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="{Binding SaveFileInfo, Mode=OneTime}"  VerticalAlignment="Center"
+                                   Margin="2" FontWeight="Bold" FontSize="16"/>
+
+            <TextBlock Grid.Column="1" Text="{Binding ShortFileName, Mode=OneTime}" VerticalAlignment="Center"
+                                   Margin="5 2 2 2" FontWeight="DemiBold"  FontSize="12" TextWrapping="Wrap"/>
+
+            <TextBox Grid.Column="2" Text="{Binding Description, Delay=500, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                   VerticalAlignment="Center" Margin="5 0 2 0" FontSize="14"
+                                   AcceptsReturn="True" TextWrapping="Wrap" Background="{StaticResource BackgroundColor}"
+                                   Foreground="White" BorderThickness="0" MinWidth="50"
+                                   behaviors:TextBoxBehavior.EnforceFocus="True">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Delete" Command="{Binding DeleteSaveCommand, Mode=OneTime}" />
+                    <KeyBinding Key="Insert" Command="{Binding ParentViewModel.CreateSaveCommand, Mode=OneTime}" />
+                </TextBox.InputBindings>
+            </TextBox>
+
+            <Button Grid.Column="3" Margin="5" Style="{StaticResource ButtonIconStyle}" 
+                                    Command="{Binding LoadSaveCommand, Mode=OneTime}" ToolTip="{StaticResource LoadSaveText}">
+                <Button.Content>
+                    <Image Source="{StaticResource LoadIcon}" Margin="0"/>
+                </Button.Content>
+            </Button>
+
+            <Button Grid.Column="4" Margin="5 5 10 5" Style="{StaticResource ButtonIconStyle}" 
+                                    Command="{Binding DeleteSaveCommand, Mode=OneTime}" ToolTip="{StaticResource DeleteSaveText}">
+                <Button.Content>
+                    <Image Source="{StaticResource DeleteIcon}" Margin="0"/>
+                </Button.Content>
+            </Button>
+
+            <Button Grid.Column="5" Margin="5" Style="{StaticResource ButtonIconStyle}" 
+                                    Command="{Binding SelectFileCommand, Mode=OneTime}" ToolTip="{StaticResource LocateAndSelectSaveText}">
+                <Button.Content>
+                    <Image Source="{StaticResource ExplorerIcon}" Margin="0"/>
+                </Button.Content>
+            </Button>
+
+            <Button Grid.Column="6" Margin="5" Style="{StaticResource ButtonIconStyle}" 
+                                    Command="{Binding CopyFileCommand, Mode=OneTime}" ToolTip="{StaticResource CopySaveToClipBoardText}">
+                <Button.Content>
+                    <Image Source="{StaticResource FileIcon}" Margin="0"/>
+                </Button.Content>
+            </Button>
+        </Grid>
+    </DataTemplate>
+
+</ResourceDictionary>

@@ -306,15 +306,18 @@ namespace StarFlintSaver.Windows.ViewModel
             }
         }
 
-        public void SelectFile(string filePath)
+        public async Task SelectFileAsync(string filePath)
         {
-            _directoryManager.SelectFileInDirectory(filePath);
+            await Task.Run(() => _directoryManager.SelectFileInDirectory(filePath));
         }
 
-        public void CopyFile(string filePath)
+        public async Task CopyFileAsync(string filePath)
         {
-            _directoryManager.CopyFileToClipboard(filePath);
-            _messageAnimationManager.StartAnimation(this, "Save copied !");
+            await Task.Run(() =>
+            {
+                _directoryManager.CopyFileToClipboard(filePath);
+                _messageAnimationManager.StartAnimation(this, "Save copied !");
+            });
         }
     }
 }

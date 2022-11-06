@@ -7,7 +7,7 @@ using System.Windows.Threading;
 
 namespace StarFlintSaver.Windows.Commands
 {
-    public class DelegateCommand : IDelegateCommand
+    public class DelegateAsyncCommandBase : IDelegateCommand
     {
         public event EventHandler CanExecuteChanged;
 
@@ -17,6 +17,11 @@ namespace StarFlintSaver.Windows.Commands
         }
 
         public void Execute(object parameter)
+        {
+            // do Nothing
+        }
+
+        protected DelegateAsyncCommandBase()
         {
             // do Nothing
         }
@@ -45,7 +50,7 @@ namespace StarFlintSaver.Windows.Commands
         }
     }
 
-    public sealed class DelegateAsyncCommand : DelegateCommand, IDelegateAsyncCommand
+    public sealed class DelegateAsyncCommand : DelegateAsyncCommandBase, IDelegateAsyncCommand
     {
         private bool _isExecuting;
         private readonly Func<Task> _execute;
@@ -101,7 +106,7 @@ namespace StarFlintSaver.Windows.Commands
         #endregion
     }
 
-    public sealed class DelegateAsyncCommand<T> : DelegateCommand, IDelegateAsyncCommand<T>
+    public sealed class DelegateAsyncCommand<T> : DelegateAsyncCommandBase, IDelegateAsyncCommand<T>
     {
         private bool _isExecuting;
         private readonly Func<T, Task> _execute;

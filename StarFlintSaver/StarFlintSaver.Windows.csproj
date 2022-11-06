@@ -65,4 +65,8 @@
     <ProjectReference Include="..\StarFlintSaver.Library\StarFlintSaver.Library.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\" />
+  </ItemGroup>
+
 </Project>

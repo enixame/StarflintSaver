@@ -1,12 +1,17 @@
-﻿using System.Threading.Tasks;
+﻿using StarFlintSaver.Windows.Commands;
+using System.Threading.Tasks;
 
 namespace StarFlintSaver.Windows.ViewModel
 {
     public interface ISaveManagerViewModel
     {
-        void SelectFile(string filePath);
+        IDelegateAsyncCommand CreateSaveCommand { get; }
 
-        void CopyFile(string filePath);
+        IDelegateAsyncCommand OpenRootFolderCommand { get; }
+
+        Task SelectFileAsync(string filePath);
+
+        Task CopyFileAsync(string filePath);
 
         Task LoadSaveAsync(SaveFileViewModel saveFileViewModel);
 

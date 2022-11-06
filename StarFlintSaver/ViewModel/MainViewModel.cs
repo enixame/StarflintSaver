@@ -1,4 +1,5 @@
 ﻿using StarFlintSaver.Library.Common;
+using StarFlintSaver.Windows.Commands;
 using StarFlintSaver.Windows.ConcurrentTask;
 using StarFlintSaver.Windows.Utils;
 using StarFlintSaver.Windows.WindowsFeatures;
@@ -13,8 +14,12 @@ namespace StarFlintSaver.Windows.ViewModel
         private readonly ITaskDispatcher _taskDispatcher;
         public SaveManagerViewModel FileManager { get; }
 
+        public IDelegateCommand WindowsClosingEventCommand { get; }
+
         public MainViewModel()
         {
+            WindowsClosingEventCommand = new DelegateCommand(ClosingAction);
+
             IClipboard clipboard = new Clipboard();
             ISystemFeatures systemFeatures = new WindowsSystemFeatures(clipboard);
             IConfigurationFileLoader configurationFileLoader = new ConfigurationFileLoader();
@@ -32,6 +37,12 @@ namespace StarFlintSaver.Windows.ViewModel
             FileManager = new SaveManagerViewModel(jsonDataRepository, starFlintFilesManager, fileSynchronisationProcess, directoryManager, _taskDispatcher);
             var task = Task.Run(async () => await FileManager.LoadDataAsync());
             task.ThrowExceptionInUiThread();
+        }
+
+        private void ClosingAction(object obj)
+        {
+            var saveTask = Task.Run(async () => await CloseAndSaveAsync());
+            saveTask.Wait();
         }
 
         private void TaskDispatcherOnError(object sender, System.Exception e)

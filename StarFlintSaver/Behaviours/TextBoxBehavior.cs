@@ -43,12 +43,11 @@ namespace StarFlintSaver.Windows.Behaviours
 
         private static void TextBoxLoadedHandler(object sender, RoutedEventArgs e)
         {
-            if (!(sender is TextBox))
+            if (!(sender is TextBox textbox))
             {
                 return;
             }
 
-            TextBox textbox = sender as TextBox;
             textbox.Focus();
             textbox.CaretIndex = textbox.Text.Length;
         }

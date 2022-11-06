@@ -1,0 +1,42 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+                    xmlns:System="clr-namespace:System;assembly=System.Runtime">
+    
+    <SolidColorBrush x:Key="BackgroundColor" Color="#FF100A26" />
+    <SolidColorBrush x:Key="LoadSaveButtonsColor" Color="#FF291C57" />
+    <SolidColorBrush x:Key="DeleteButtonsColor" Color="#FF812424" />
+    <SolidColorBrush x:Key="MessageColor" Color="#FF474B1B" />
+    <SolidColorBrush x:Key="SaveMessageColor" Color="#FF866F8F" />
+
+    <Storyboard x:Key="BlinkStoryboard">
+        <DoubleAnimation Storyboard.TargetProperty="(TextBlock.Opacity)" 
+                                From="0" To="1" Duration="0:0:0.5" RepeatBehavior="Forever" AutoReverse="True"/>
+    </Storyboard>
+
+    <Style x:Key="ButtonIconStyle" TargetType="{x:Type Button}">
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="Width" Value="16"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
+    <Style x:Key="LargeButtonIconStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonIconStyle}">
+        <Setter Property="Height" Value="24"/>
+        <Setter Property="Width" Value="24"/>
+    </Style>
+
+    <System:String x:Key="LoadSaveText">Load this save</System:String>
+    <System:String x:Key="DeleteSaveText">Delete this save</System:String>
+    <System:String x:Key="LocateAndSelectSaveText">Locate and select save file in the root folder</System:String>
+    <System:String x:Key="CopySaveToClipBoardText">Copy save file to clipboard</System:String>
+    <System:String x:Key="OpenRootFolderText">Open saves root folder</System:String>
+
+    <BitmapImage x:Key="OpenFolderIcon" UriSource="../Images/openfolder.png" />
+    <BitmapImage x:Key="ExplorerIcon" UriSource="../Images/explorer.png" />
+    <BitmapImage x:Key="FileIcon" UriSource="../Images/file.png" />
+    <BitmapImage x:Key="LoadIcon" UriSource="../Images/load.png" />
+    <BitmapImage x:Key="DeleteIcon" UriSource="../Images/delete.png" />
+    <BitmapImage x:Key="NewIcon" UriSource="../Images/new.png" />
+    <BitmapImage x:Key="SynchroIcon" UriSource="../Images/synchro.png" />
+
+</ResourceDictionary>

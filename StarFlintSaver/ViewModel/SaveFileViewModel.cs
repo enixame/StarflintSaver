@@ -1,7 +1,6 @@
 ﻿using StarFlintSaver.Library.Data;
 using StarFlintSaver.Windows.Commands;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace StarFlintSaver.Windows.ViewModel
 {
@@ -12,8 +11,8 @@ namespace StarFlintSaver.Windows.ViewModel
             ParentViewModel = parentViewModel;
             SaveFile = saveFile;
 
-            SelectFileCommand = new DelegateAsyncCommand(SelectFileAsync);
-            CopyFileCommand = new DelegateAsyncCommand(CopyFileAsync);
+            SelectFileCommand = new DelegateAsyncCommand(async () => await ParentViewModel.SelectFileAsync(SaveFile.FileName));
+            CopyFileCommand = new DelegateAsyncCommand(async() => await ParentViewModel.CopyFileAsync(SaveFile.FileName));
             LoadSaveCommand = new DelegateAsyncCommand(async () => await ParentViewModel.LoadSaveAsync(this));
             DeleteSaveCommand = new DelegateAsyncCommand(async () => await ParentViewModel.DeleteSaveAsync(this));
         }
@@ -48,16 +47,6 @@ namespace StarFlintSaver.Windows.ViewModel
                 SaveFile.Description = value;
                 NotifyPropertyChanged(nameof(Description));
             }
-        }
-
-        private async Task SelectFileAsync()
-        {
-            await Task.Run(() => ParentViewModel.SelectFile(SaveFile.FileName));
-        }
-
-        private async Task CopyFileAsync()
-        {
-            await Task.Run(() => ParentViewModel.CopyFile(SaveFile.FileName));
         }
     }
 }
