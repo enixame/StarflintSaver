@@ -6,10 +6,6 @@ namespace StarFlintSaver.Library.Common
 {
     public interface IJsonDataRepository
     {
-        IList<SaveFile> SaveFiles { get; }
-        void AddSaveFile(SaveFile saveFile);
-        void DeleteSaveFile(SaveFile saveFile);
-        Task<IList<SaveFile>> LoadFromJsonDataAsync();
-        Task SaveAsJsonDataAsync();
+        Task<IList<SaveFile>> LoadSaveFilesAsync();
     }
 }
