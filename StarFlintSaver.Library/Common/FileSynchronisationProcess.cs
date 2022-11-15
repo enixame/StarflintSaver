@@ -8,9 +8,9 @@ namespace StarFlintSaver.Library.Common
     public sealed class FileSynchronisationProcess : IFileSynchronisationProcess
     {
         private readonly IDirectoryManager _directoryManager;
-        private readonly IJsonDataRepository _jsonDataRepository;
+        private readonly IJsonSaveFileRepository _jsonDataRepository;
 
-        public FileSynchronisationProcess(IDirectoryManager directoryManager, IJsonDataRepository jsonDataRepository)
+        public FileSynchronisationProcess(IDirectoryManager directoryManager, IJsonSaveFileRepository jsonDataRepository)
         {
             _directoryManager = directoryManager;
             _jsonDataRepository = jsonDataRepository;

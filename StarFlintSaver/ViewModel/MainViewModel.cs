@@ -27,7 +27,7 @@ namespace StarFlintSaver.Windows.ViewModel
             IStarFlintFileInfo starFlintFileInfo = new StarFlintFileInfo(configurationFileLoader);
             IDirectoryManager directoryManager = new DirectoryManager(configurationFileLoader, systemFeatures);
 
-            IJsonDataRepository jsonDataRepository = new JsonDataRepository(starFlintFileInfo);
+            IJsonSaveFileRepository jsonDataRepository = new JsonSaveFileRepository(starFlintFileInfo);
             IStarFlintFilesManager starFlintFilesManager = new StarFlintFilesManager(directoryManager, starFlintFileInfo);
             IFileSynchronisationProcess fileSynchronisationProcess = new FileSynchronisationProcess(directoryManager, jsonDataRepository);
 

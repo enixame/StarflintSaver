@@ -8,13 +8,14 @@ using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 
 namespace StarFlintSaver.Windows.ViewModel
 {
     public sealed class SaveManagerViewModel : ViewModelBase, ISaveManagerViewModel
     {
-        private readonly IJsonDataRepository _jsonDataRepository;
+        private readonly IJsonSaveFileRepository _jsonDataRepository;
         private readonly IStarFlintFilesManager _starFlintFilesManager;
         private readonly IFileSynchronisationProcess _fileSynchronisationProcess;
         private readonly IDirectoryManager _directoryManager;
@@ -31,7 +32,7 @@ namespace StarFlintSaver.Windows.ViewModel
         private bool _resyncProcessIsRuning;
 
         public SaveManagerViewModel(
-            IJsonDataRepository jsonDataRepository,
+            IJsonSaveFileRepository jsonDataRepository,
             IStarFlintFilesManager starFlintFilesManager,
             IFileSynchronisationProcess fileSynchronisationProcess,
             IDirectoryManager directoryManager,
