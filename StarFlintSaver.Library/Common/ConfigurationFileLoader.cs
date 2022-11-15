@@ -21,6 +21,8 @@ namespace StarFlintSaver.Library.Common
         private readonly string _configurationBaseDirectory;
         private readonly string _configurationFile;
 
+        private readonly object _lockObject = new object();
+
         private StarFlintSaverConfiguration _starFlintSaverConfiguration;
 
         public ConfigurationFileLoader()
@@ -39,9 +41,12 @@ namespace StarFlintSaver.Library.Common
 
         public StarFlintSaverConfiguration GetConfiguration()
         {
-            if(_starFlintSaverConfiguration != null)
+            lock(_lockObject)
             {
-                return _starFlintSaverConfiguration;
+                if (_starFlintSaverConfiguration != null)
+                {
+                    return _starFlintSaverConfiguration;
+                }
             }
 
             CheckIfConfigurationDirectoryExists();
@@ -71,17 +76,42 @@ namespace StarFlintSaver.Library.Common
                 string jsonString = JsonSerializer.Serialize(starFlintSaverConfiguration, _jsonSerializerOptions);
                 File.WriteAllText(_configurationFile, jsonString);
 
-                _starFlintSaverConfiguration = starFlintSaverConfiguration;
-
-                return _starFlintSaverConfiguration;
+                lock (_lockObject)
+                {
+                    _starFlintSaverConfiguration = starFlintSaverConfiguration;
+                    return _starFlintSaverConfiguration;
+                }             
             }
             else
             {
                 string jsonString = File.ReadAllText(_configurationFile);
-                _starFlintSaverConfiguration = JsonSerializer.Deserialize<StarFlintSaverConfiguration>(jsonString, _jsonSerializerOptions);
-
-                return _starFlintSaverConfiguration;
+                lock (_lockObject)
+                {
+                    _starFlintSaverConfiguration = JsonSerializer.Deserialize<StarFlintSaverConfiguration>(jsonString, _jsonSerializerOptions);
+                    return _starFlintSaverConfiguration;
+                }
             }
+        }
+
+        public void UpdateStarFlintSaverBaseDirectory(string starFlintSaverBaseDirectory)
+        {
+            if (!Directory.Exists(starFlintSaverBaseDirectory))
+            {
+                throw new InvalidOperationException($"Directory {starFlintSaverBaseDirectory} does not exist.");
+            }
+
+            lock (_lockObject)
+            {
+                if(_starFlintSaverConfiguration == null)
+                {
+                    return;
+                }
+
+                _starFlintSaverConfiguration.StarFlintSaverBaseDirectory = starFlintSaverBaseDirectory;
+            }
+
+            var jsonString = JsonSerializer.Serialize(_starFlintSaverConfiguration, _jsonSerializerOptions);
+            File.WriteAllText(_configurationFile, jsonString);
         }
     }
 }
