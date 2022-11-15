@@ -3,6 +3,7 @@ using StarFlintSaver.Library.Data;
 using StarFlintSaver.Windows.Commands;
 using StarFlintSaver.Windows.ConcurrentTask;
 using StarFlintSaver.Windows.Utils;
+using StarFlintSaver.Windows.WindowsFeatures;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -50,6 +51,7 @@ namespace StarFlintSaver.Windows.ViewModel
             DeleteSaveCommand = new DelegateAsyncCommand<SaveFileViewModel>(DeleteSaveAsync, (saveFileViewModel) => SelectedSaveFile != null && !ResyncProcessIsRunning);
             ResyncCommand = new DelegateAsyncCommand(ResyncSaveFilesAsync, () => !ResyncProcessIsRunning);
             OpenRootFolderCommand = new DelegateAsyncCommand(OpenRootFolderCommandAsync);
+            SelectFolderCommand = new DelegateCommand(OpenFolderDialog);
         }
 
         public ObservableCollection<SaveFileViewModel> SaveFiles { get; } = new ObservableCollection<SaveFileViewModel>();
@@ -157,6 +159,8 @@ namespace StarFlintSaver.Windows.ViewModel
         public IDelegateAsyncCommand ResyncCommand { get; }
 
         public IDelegateAsyncCommand OpenRootFolderCommand { get; }
+
+        public IDelegateCommand SelectFolderCommand { get; }
 
         private async Task CreateSaveAsync()
         {
@@ -296,6 +300,20 @@ namespace StarFlintSaver.Windows.ViewModel
         {
             _taskDispatcher.Dispose();
             await SaveDataAsync();
+        }
+
+        public void OpenFolderDialog(object obj)
+        {
+            UiThreadDispatcher.Invoke(() =>
+            {
+                IFolderBrowerDialog dialog = FolderBrowserDialogFactory.CreateFolderBrowserDialog();
+                dialog.InitialFolder = _directoryManager.GetRootDirectory();
+
+                if (dialog.ShowDialog() == DialogResult.Ok)
+                {
+                    var newRootDirectory = dialog.SelectFolder;
+                }
+            });
         }
 
         private void SaveFileViewModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs args)

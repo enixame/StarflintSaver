@@ -1,0 +1,50 @@
+﻿using System;
+
+namespace StarFlintSaver.Windows.WindowsFeatures
+{
+    internal enum HRESULT : int
+    {
+        S_OK = 0,
+        S_FALSE = 1,
+        E_NOINTERFACE = unchecked((int)0x80004002),
+        E_NOTIMPL = unchecked((int)0x80004001),
+        E_FAIL = unchecked((int)0x80004005),
+    }
+
+    internal enum KNOWN_FOLDER_FLAG
+    {
+        KF_FLAG_DEFAULT,
+        KF_FLAG_FORCE_APP_DATA_REDIRECTION,
+        KF_FLAG_RETURN_FILTER_REDIRECTION_TARGET,
+        KF_FLAG_FORCE_PACKAGE_REDIRECTION,
+        KF_FLAG_NO_PACKAGE_REDIRECTION,
+        KF_FLAG_FORCE_APPCONTAINER_REDIRECTION,
+        KF_FLAG_NO_APPCONTAINER_REDIRECTION,
+        KF_FLAG_CREATE,
+        KF_FLAG_DONT_VERIFY,
+        KF_FLAG_DONT_UNEXPAND,
+        KF_FLAG_NO_ALIAS,
+        KF_FLAG_INIT,
+        KF_FLAG_DEFAULT_PATH,
+        KF_FLAG_NOT_PARENT_RELATIVE,
+        KF_FLAG_SIMPLE_IDLIST,
+        KF_FLAG_ALIAS_ONLY
+    }
+
+    [Flags]
+    internal enum SHCONT : ushort
+    {
+        SHCONTF_CHECKING_FOR_CHILDREN = 0x0010,
+        SHCONTF_FOLDERS = 0x0020,
+        SHCONTF_NONFOLDERS = 0x0040,
+        SHCONTF_INCLUDEHIDDEN = 0x0080,
+        SHCONTF_INIT_ON_FIRST_NEXT = 0x0100,
+        SHCONTF_NETPRINTERSRCH = 0x0200,
+        SHCONTF_SHAREABLE = 0x0400,
+        SHCONTF_STORAGE = 0x0800,
+        SHCONTF_NAVIGATION_ENUM = 0x1000,
+        SHCONTF_FASTITEMS = 0x2000,
+        SHCONTF_FLATLIST = 0x4000,
+        SHCONTF_ENABLE_ASYNC = 0x8000
+    }
+}
